@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Textiles | Luxury Fabric Manufacturer</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Lato', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        charcoal: '#1a1a1a',
+                        cream: '#faf9f6',
+                        gold: '#c5a059'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Styles for Toast Notification */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #1a1a1a;
+            color: #faf9f6;
+            text-align: center;
+            border-radius: 4px;
+            padding: 16px;
+            position: fixed;
+            z-index: 50;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.5s, bottom 0.5s;
+            font-family: 'Lato', sans-serif;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
+        
+        /* Nav active state */
+        .nav-active {
+            color: #c5a059 !important;
+        }
+    </style>
+</head>
+<body class="bg-cream text-charcoal font-sans antialiased selection:bg-gold selection:text-white flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-40 top-0 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-24">
+                <!-- Logo -->
+                <div class="flex-shrink-0 cursor-pointer" onclick="switchTab('view-home')">
+                    <span class="font-serif text-3xl font-semibold tracking-wider text-white transition-colors duration-300" id="logo-text">AURA</span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-center space-x-6 lg:space-x-8">
+                        <button onclick="switchTab('view-home')" class="nav-btn text-white/90 hover:text-gold transition-colors duration-200 text-sm tracking-widest uppercase nav-link nav-active" data-target="view-home">Home</button>
+                        <button onclick="switchTab('view-about')" class="nav-btn text-white/90 hover:text-gold transition-colors duration-200 text-sm tracking-widest uppercase nav-link" data-target="view-about">About</button>
+                        <button onclick="switchTab('view-contact')" class="nav-btn text-white/90 hover:text-gold transition-colors duration-200 text-sm tracking-widest uppercase nav-link" data-target="view-contact">Contact</button>
+                        <button onclick="switchTab('view-shipping')" class="nav-btn text-white/90 hover:text-gold transition-colors duration-200 text-sm tracking-widest uppercase nav-link" data-target="view-shipping">Shipping</button>
+                        <button onclick="switchTab('view-careers')" class="nav-btn text-white/90 hover:text-gold transition-colors duration-200 text-sm tracking-widest uppercase nav-link" data-target="view-careers">Careers</button>
+                        <button onclick="switchTab('view-press')" class="nav-btn text-white/90 hover:text-gold transition-colors duration-200 text-sm tracking-widest uppercase nav-link" data-target="view-press">Press</button>
+                        <button onclick="showToast('Shopping cart is currently empty.')" class="text-white/90 hover:text-gold transition-colors duration-200 nav-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-white hover:text-gold focus:outline-none nav-link transition-colors duration-300">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden bg-charcoal/95 backdrop-blur-md absolute w-full transition-all duration-300">
+            <div class="px-2 pt-2 pb-6 space-y-1 sm:px-3 flex flex-col items-center gap-4">
+                <button onclick="switchTab('view-home')" class="nav-btn-mobile text-gold block px-3 py-2 text-sm uppercase tracking-widest hover:text-gold" data-target="view-home">Home</button>
+                <button onclick="switchTab('view-about')" class="nav-btn-mobile text-cream block px-3 py-2 text-sm uppercase tracking-widest hover:text-gold" data-target="view-about">About</button>
+                <button onclick="switchTab('view-contact')" class="nav-btn-mobile text-cream block px-3 py-2 text-sm uppercase tracking-widest hover:text-gold" data-target="view-contact">Contact</button>
+                <button onclick="switchTab('view-shipping')" class="nav-btn-mobile text-cream block px-3 py-2 text-sm uppercase tracking-widest hover:text-gold" data-target="view-shipping">Shipping</button>
+                <button onclick="switchTab('view-careers')" class="nav-btn-mobile text-cream block px-3 py-2 text-sm uppercase tracking-widest hover:text-gold" data-target="view-careers">Careers</button>
+                <button onclick="switchTab('view-press')" class="nav-btn-mobile text-cream block px-3 py-2 text-sm uppercase tracking-widest hover:text-gold" data-target="view-press">Press</button>
+                <button onclick="showToast('Shopping cart is currently empty.')" class="text-cream block px-3 py-2 text-sm uppercase tracking-widest hover:text-gold">Cart (0)</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow">
+        
+        <!-- ==================== HOME VIEW ==================== -->
+        <div id="view-home" class="page-view block animate-fade-in">
+            <!-- Hero Section -->
+            <header class="relative h-screen flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1580228490969-952402179836?auto=format&fit=crop&q=80" alt="Flowing luxury fabric" class="w-full h-full object-cover" />
+                    <div class="absolute inset-0 bg-black/40"></div>
+                </div>
+                <div class="relative z-10 text-center px-4 max-w-4xl mx-auto mt-16">
+                    <p class="text-gold uppercase tracking-[0.3em] text-xs sm:text-sm mb-6">Makers of Fine Textiles</p>
+                    <h1 class="font-serif text-5xl sm:text-6xl md:text-7xl text-white mb-8 leading-tight">Woven with <br/><span class="italic font-light">Elegance</span> & Time</h1>
+                    <p class="text-white/80 font-light text-lg sm:text-xl max-w-2xl mx-auto mb-10">Uncompromising quality. Sustainable practices. Discover our curated collection of masterfully crafted fabrics for the modern connoisseur.</p>
+                    <button onclick="document.getElementById('fabrics').scrollIntoView({behavior: 'smooth'})" class="inline-block border border-white text-white px-10 py-4 uppercase tracking-widest text-sm hover:bg-white hover:text-charcoal transition-all duration-300">
+                        Explore the Collection
+                    </button>
+                </div>
+            </header>
+
+            <!-- Featured Fabrics (Shop) -->
+            <section id="fabrics" class="py-24 sm:py-32 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-20">
+                        <h4 class="text-gold uppercase tracking-[0.2em] text-sm mb-4">The Collection</h4>
+                        <h2 class="font-serif text-4xl sm:text-5xl text-charcoal mb-6">Featured Materials</h2>
+                        <div class="w-16 h-px bg-gold mx-auto"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                        <!-- Product 1 -->
+                        <div class="group cursor-pointer">
+                            <div class="relative overflow-hidden aspect-[3/4] mb-6">
+                                <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&q=80" alt="Mulberry Silk" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
+                                <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500"></div>
+                                <button onclick="addToCart('Imperial Mulberry Silk', 145)" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white text-charcoal px-8 py-3 uppercase tracking-widest text-xs font-semibold opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-charcoal hover:text-white shadow-lg">
+                                    Add to Cart
+                                </button>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-xs text-charcoal/50 uppercase tracking-widest mb-1">100% Pure</p>
+                                <h3 class="font-serif text-xl mb-2 text-charcoal">Imperial Mulberry Silk</h3>
+                                <p class="text-gold font-light">$145.00 <span class="text-xs text-charcoal/50">/ yard</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Product 2 -->
+                        <div class="group cursor-pointer">
+                            <div class="relative overflow-hidden aspect-[3/4] mb-6">
+                                <img src="https://images.unsplash.com/photo-1612423284934-2850a4ea6b0f?auto=format&fit=crop&q=80" alt="Mongolian Cashmere" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
+                                <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500"></div>
+                                <button onclick="addToCart('Mongolian Cashmere', 210)" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white text-charcoal px-8 py-3 uppercase tracking-widest text-xs font-semibold opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-charcoal hover:text-white shadow-lg">
+                                    Add to Cart
+                                </button>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-xs text-charcoal/50 uppercase tracking-widest mb-1">Grade A</p>
+                                <h3 class="font-serif text-xl mb-2 text-charcoal">Mongolian Cashmere</h3>
+                                <p class="text-gold font-light">$210.00 <span class="text-xs text-charcoal/50">/ yard</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Product 3 -->
+                        <div class="group cursor-pointer">
+                            <div class="relative overflow-hidden aspect-[3/4] mb-6">
+                                <img src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&q=80" alt="Merino Wool" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
+                                <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500"></div>
+                                <button onclick="addToCart('Bespoke Merino Wool', 115)" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white text-charcoal px-8 py-3 uppercase tracking-widest text-xs font-semibold opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-charcoal hover:text-white shadow-lg">
+                                    Add to Cart
+                                </button>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-xs text-charcoal/50 uppercase tracking-widest mb-1">Super 150s</p>
+                                <h3 class="font-serif text-xl mb-2 text-charcoal">Bespoke Merino Wool</h3>
+                                <p class="text-gold font-light">$115.00 <span class="text-xs text-charcoal/50">/ yard</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-16">
+                        <button onclick="showToast('Full catalog loading...')" class="border border-charcoal text-charcoal px-10 py-4 uppercase tracking-widest text-sm hover:bg-charcoal hover:text-white transition-all duration-300">
+                            View Full Catalog
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== ABOUT US VIEW ==================== -->
+        <div id="view-about" class="page-view hidden">
+            <!-- Header Banner -->
+            <header class="relative h-[60vh] flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1558904541-efa843a96f09?auto=format&fit=crop&q=80" alt="Weaving threads" class="w-full h-full object-cover" />
+                    <div class="absolute inset-0 bg-black/50"></div>
+                </div>
+                <div class="relative z-10 text-center px-4 mt-16">
+                    <h1 class="font-serif text-5xl sm:text-6xl text-white mb-4">Our Heritage</h1>
+                    <div class="w-16 h-px bg-gold mx-auto"></div>
+                </div>
+            </header>
+
+            <!-- Heritage Content -->
+            <section class="py-24 sm:py-32 bg-cream">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div class="order-2 lg:order-1">
+                            <h4 class="text-gold uppercase tracking-[0.2em] text-sm mb-4">The Aura Story</h4>
+                            <h2 class="font-serif text-4xl sm:text-5xl text-charcoal mb-8 leading-tight">A Legacy of <br/>Master Craftsmanship</h2>
+                            <div class="space-y-6 text-charcoal/70 font-light leading-relaxed text-lg">
+                                <p>Founded in 1982 by Eleanor Vance, Aura Textiles began as a small, independent weaving mill in the heart of the Canadian Rockies. Driven by a passion for the tactile beauty of natural fibers, Eleanor set out to create textiles that would stand the test of time, both in durability and design.</p>
+                                <p>Today, we continue that legacy. Our process is a delicate dance between honoring centuries-old weaving traditions and embracing modern, sustainable innovations. Every yard of silk, every spool of cashmere, and every bolt of wool that leaves our mill has been subjected to rigorous quality control by masterful hands.</p>
+                                <p>We don't just manufacture fabric; we craft the canvas for your most inspired creations. From the sourcing of ethically produced raw materials to the final inspection in our Calgary facility, every step is infused with intention and artistry.</p>
+                            </div>
+                            <div class="mt-10">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Signature_Placeholder.svg" alt="Founder Signature" class="h-12 opacity-60" style="filter: invert(1); mix-blend-mode: multiply;" />
+                                <p class="mt-2 text-sm font-semibold tracking-wider uppercase text-charcoal">Eleanor Vance, Founder</p>
+                            </div>
+                        </div>
+                        <div class="relative order-1 lg:order-2">
+                            <img src="https://images.unsplash.com/photo-1605289982774-9a6fef564df8?auto=format&fit=crop&q=80" alt="Traditional Loom" class="w-full h-[600px] object-cover rounded-sm shadow-xl" />
+                            <div class="absolute -bottom-8 -left-8 w-48 h-48 bg-charcoal hidden sm:flex items-center justify-center rounded-sm">
+                                <p class="text-white font-serif text-center italic">Since<br/><span class="text-2xl not-italic font-semibold mt-1 block text-gold">1982</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Process Section -->
+            <section class="py-24 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 class="font-serif text-3xl sm:text-4xl text-charcoal mb-16">The Art of Creation</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                        <div>
+                            <span class="text-gold font-serif text-5xl block mb-4">01</span>
+                            <h3 class="font-semibold uppercase tracking-widest text-sm mb-4">Ethical Sourcing</h3>
+                            <p class="font-light text-charcoal/70">We partner directly with farmers and herders around the globe who share our commitment to animal welfare and environmental stewardship.</p>
+                        </div>
+                        <div>
+                            <span class="text-gold font-serif text-5xl block mb-4">02</span>
+                            <h3 class="font-semibold uppercase tracking-widest text-sm mb-4">Master Weaving</h3>
+                            <p class="font-light text-charcoal/70">Our artisans utilize both vintage looms and state-of-the-art jacquard machines to achieve complex weaves and exceptional strength.</p>
+                        </div>
+                        <div>
+                            <span class="text-gold font-serif text-5xl block mb-4">03</span>
+                            <h3 class="font-semibold uppercase tracking-widest text-sm mb-4">Meticulous Finishing</h3>
+                            <p class="font-light text-charcoal/70">Fabrics undergo a proprietary washing and finishing process using purified water, ensuring the softest hand and flawless drape.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== LOCATION & CONTACT VIEW ==================== -->
+        <div id="view-contact" class="page-view hidden">
+            <!-- Header Banner -->
+            <header class="relative h-[50vh] flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80" alt="Showroom Interior" class="w-full h-full object-cover" />
+                    <div class="absolute inset-0 bg-black/60"></div>
+                </div>
+                <div class="relative z-10 text-center px-4 mt-16">
+                    <h1 class="font-serif text-5xl sm:text-6xl text-white mb-4">Visit Us</h1>
+                    <div class="w-16 h-px bg-gold mx-auto"></div>
+                </div>
+            </header>
+
+            <!-- Contact Content -->
+            <section class="py-24 sm:py-32 bg-cream">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                        
+                        <!-- Contact Info & Map Placeholder -->
+                        <div>
+                            <h4 class="text-gold uppercase tracking-[0.2em] text-sm mb-4">Showroom</h4>
+                            <h2 class="font-serif text-4xl text-charcoal mb-8">Calgary Headquarters</h2>
+                            <p class="font-light text-charcoal/70 mb-10 leading-relaxed">
+                                Experience the weight, drape, and exceptional hand of our fabrics in person. Our design consultants are available for private viewings, bespoke commissions, and wholesale inquiries.
+                            </p>
+                            
+                            <div class="space-y-8 font-light mb-12">
+                                <div class="flex items-start">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gold mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    <div>
+                                        <p class="font-semibold uppercase tracking-widest text-xs mb-1 text-charcoal">Address</p>
+                                        <p class="text-charcoal/70">1200 9th Ave SE<br/>Calgary, AB T2G 0T1<br/>Canada</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gold mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <div>
+                                        <p class="font-semibold uppercase tracking-widest text-xs mb-1 text-charcoal">Hours</p>
+                                        <p class="text-charcoal/70">Monday - Friday: 10am - 6pm<br/>Saturday: 11am - 5pm<br/>Sunday: Closed (By Appointment)</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gold mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
+                                    <div>
+                                        <p class="font-semibold uppercase tracking-widest text-xs mb-1 text-charcoal">Phone & Email</p>
+                                        <p class="text-charcoal/70">+1 (403) 555-0198<br/>concierge@auratextiles.example.com</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Decorative Map Image -->
+                            <div class="w-full h-64 bg-gray-200 overflow-hidden relative group">
+                                <img src="https://images.unsplash.com/photo-1549420070-5b565a4639c4?auto=format&fit=crop&q=80" alt="Calgary View" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 transition-all duration-500" />
+                                <div class="absolute inset-0 border border-black/10"></div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Form -->
+                        <div class="bg-white p-10 sm:p-12 shadow-xl border border-gray-100">
+                            <h3 class="font-serif text-2xl text-charcoal mb-6">Send an Inquiry</h3>
+                            <form onsubmit="handleContactSubmit(event)" class="space-y-6">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="firstName" class="block text-xs uppercase tracking-widest text-charcoal/60 mb-2">First Name</label>
+                                        <input type="text" id="firstName" required class="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-gold bg-transparent transition-colors text-sm" />
+                                    </div>
+                                    <div>
+                                        <label for="lastName" class="block text-xs uppercase tracking-widest text-charcoal/60 mb-2">Last Name</label>
+                                        <input type="text" id="lastName" required class="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-gold bg-transparent transition-colors text-sm" />
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="email" class="block text-xs uppercase tracking-widest text-charcoal/60 mb-2">Email Address</label>
+                                    <input type="email" id="email" required class="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-gold bg-transparent transition-colors text-sm" />
+                                </div>
+                                
+                                <div>
+                                    <label for="subject" class="block text-xs uppercase tracking-widest text-charcoal/60 mb-2">Subject</label>
+                                    <select id="subject" class="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-gold bg-transparent transition-colors text-sm text-charcoal">
+                                        <option>General Inquiry</option>
+                                        <option>Wholesale Account</option>
+                                        <option>Bespoke Commission</option>
+                                        <option>Showroom Appointment</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label for="message" class="block text-xs uppercase tracking-widest text-charcoal/60 mb-2">Message</label>
+                                    <textarea id="message" rows="4" required class="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-gold bg-transparent transition-colors text-sm resize-none"></textarea>
+                                </div>
+                                
+                                <button type="submit" class="w-full bg-charcoal text-white py-4 uppercase tracking-widest text-sm hover:bg-gold transition-colors duration-300">
+                                    Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== SHIPPING & RETURNS VIEW ==================== -->
+        <div id="view-shipping" class="page-view hidden">
+            <!-- Header Banner -->
+            <header class="relative h-[40vh] flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1555529771-835f59bfc50c?auto=format&fit=crop&q=80" alt="Shipping Packages" class="w-full h-full object-cover" />
+                    <div class="absolute inset-0 bg-black/60"></div>
+                </div>
+                <div class="relative z-10 text-center px-4 mt-16">
+                    <h1 class="font-serif text-5xl sm:text-6xl text-white mb-4">Shipping & Returns</h1>
+                    <div class="w-16 h-px bg-gold mx-auto"></div>
+                </div>
+            </header>
+
+            <section class="py-24 bg-cream">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="space-y-16">
+                        <!-- Shipping Information -->
+                        <div>
+                            <h2 class="font-serif text-3xl text-charcoal mb-6 border-b border-gray-300 pb-4">Domestic & International Shipping</h2>
+                            <div class="space-y-4 text-charcoal/70 font-light leading-relaxed">
+                                <p><strong>Lab Purpose Placeholder:</strong> This is simulated information regarding Aura Textiles' shipping protocols. All orders are processed within 2-3 business days. Orders are not shipped or delivered on weekends or holidays.</p>
+                                <p>If we are experiencing a high volume of orders, shipments may be delayed by a few days. Please allow additional days in transit for delivery. If there will be a significant delay in shipment of your order, we will contact you via email or telephone.</p>
+                                <ul class="list-disc pl-5 space-y-2 mt-4">
+                                    <li>Standard Ground Shipping (Canada & US): 5-7 Business Days - $15.00</li>
+                                    <li>Express Courier (Canada & US): 2-3 Business Days - $35.00</li>
+                                    <li>International Shipping (Global): 7-14 Business Days - Rates vary by destination</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Returns Policy -->
+                        <div>
+                            <h2 class="font-serif text-3xl text-charcoal mb-6 border-b border-gray-300 pb-4">Return & Exchange Policy</h2>
+                            <div class="space-y-4 text-charcoal/70 font-light leading-relaxed">
+                                <p><strong>Lab Purpose Placeholder:</strong> Due to the bespoke nature of our cut luxury fabrics, returns are generally not accepted once the fabric has been cut from the bolt.</p>
+                                <p>We strongly recommend ordering a swatch sample before purchasing yardage to ensure the color, weight, and hand meet your exact specifications. If an item arrives damaged or defective, please contact our concierge team within 7 days of delivery to initiate an exchange or store credit.</p>
+                                <p>To be eligible for a return on pre-cut or finished goods (such as throws or scarves), your item must be unused, in the same condition that you received it, and in its original packaging.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== CAREERS VIEW ==================== -->
+        <div id="view-careers" class="page-view hidden">
+            <!-- Header Banner -->
+            <header class="relative h-[40vh] flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&q=80" alt="Design Studio" class="w-full h-full object-cover" />
+                    <div class="absolute inset-0 bg-black/60"></div>
+                </div>
+                <div class="relative z-10 text-center px-4 mt-16">
+                    <h1 class="font-serif text-5xl sm:text-6xl text-white mb-4">Careers at Aura</h1>
+                    <div class="w-16 h-px bg-gold mx-auto"></div>
+                </div>
+            </header>
+
+            <section class="py-24 bg-white">
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="font-serif text-3xl text-charcoal mb-4">Join Our Atelier</h2>
+                        <p class="text-charcoal/70 font-light max-w-2xl mx-auto">We are always looking for passionate artisans, forward-thinking designers, and dedicated professionals to join our growing team in Calgary. Review our open positions below.</p>
+                    </div>
+
+                    <div class="space-y-8">
+                        <!-- Job Role 1 -->
+                        <div class="border border-gray-200 p-8 hover:shadow-xl transition-shadow duration-300">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                                <div>
+                                    <h3 class="font-serif text-2xl text-charcoal">Master Textile Designer</h3>
+                                    <p class="text-gold text-sm tracking-widest uppercase mt-1">Calgary, AB • Full-Time</p>
+                                </div>
+                                <button onclick="showToast('Application portal is currently offline for maintenance.')" class="bg-charcoal text-white px-6 py-2 uppercase tracking-widest text-xs hover:bg-gold transition-colors w-full md:w-auto">Apply Now</button>
+                            </div>
+                            <p class="text-charcoal/70 font-light text-sm leading-relaxed">
+                                Join our creative team to develop innovative weave structures and distinct seasonal patterns. The ideal candidate will have 10+ years of experience in jacquard weaving, a deep understanding of natural fiber blending, and a passion for sustainable design methodologies.
+                            </p>
+                        </div>
+
+                        <!-- Job Role 2 -->
+                        <div class="border border-gray-200 p-8 hover:shadow-xl transition-shadow duration-300">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                                <div>
+                                    <h3 class="font-serif text-2xl text-charcoal">Systems Administrator</h3>
+                                    <p class="text-gold text-sm tracking-widest uppercase mt-1">Calgary, AB • Full-Time</p>
+                                </div>
+                                <button onclick="showToast('Application portal is currently offline for maintenance.')" class="bg-charcoal text-white px-6 py-2 uppercase tracking-widest text-xs hover:bg-gold transition-colors w-full md:w-auto">Apply Now</button>
+                            </div>
+                            <p class="text-charcoal/70 font-light text-sm leading-relaxed">
+                                We are seeking a dedicated IT professional to manage and secure our internal network infrastructure. Responsibilities include comprehensive administration of <strong>Microsoft Entra ID</strong>, device management via Intune, and handling all endpoint deployments across our corporate and manufacturing teams. You will ensure seamless IT operations for a modern, hybrid manufacturing environment.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== PRESS VIEW ==================== -->
+        <div id="view-press" class="page-view hidden">
+            <!-- Header Banner -->
+            <header class="relative h-[40vh] flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80" alt="Press and Media" class="w-full h-full object-cover" />
+                    <div class="absolute inset-0 bg-black/60"></div>
+                </div>
+                <div class="relative z-10 text-center px-4 mt-16">
+                    <h1 class="font-serif text-5xl sm:text-6xl text-white mb-4">Press & News</h1>
+                    <div class="w-16 h-px bg-gold mx-auto"></div>
+                </div>
+            </header>
+
+            <section class="py-24 bg-cream">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                        <!-- Press Article 1 -->
+                        <div class="bg-white group cursor-pointer border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+                            <div class="p-8">
+                                <p class="text-xs text-charcoal/50 uppercase tracking-widest mb-3">September 12, 2026</p>
+                                <h3 class="font-serif text-xl mb-4 text-charcoal group-hover:text-gold transition-colors">Aura Textiles Featured in Vogue Home's Fall Editorial</h3>
+                                <p class="text-charcoal/70 font-light text-sm mb-6 leading-relaxed">
+                                    Our bespoke Mongolian Cashmere collection takes center stage in Vogue Home's latest editorial on sustainable, ultra-luxury interiors...
+                                </p>
+                                <span class="text-xs uppercase tracking-widest font-semibold text-charcoal border-b border-charcoal pb-1">Read Full Story</span>
+                            </div>
+                        </div>
+
+                        <!-- Press Article 2 -->
+                        <div class="bg-white group cursor-pointer border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+                            <div class="p-8">
+                                <p class="text-xs text-charcoal/50 uppercase tracking-widest mb-3">July 04, 2026</p>
+                                <h3 class="font-serif text-xl mb-4 text-charcoal group-hover:text-gold transition-colors">Announcing the 2026 Sustainable Sourcing Initiative</h3>
+                                <p class="text-charcoal/70 font-light text-sm mb-6 leading-relaxed">
+                                    Aura Textiles commits to 100% traceable, carbon-neutral supply chains for all raw wool and silk materials by the end of the decade...
+                                </p>
+                                <span class="text-xs uppercase tracking-widest font-semibold text-charcoal border-b border-charcoal pb-1">Read Full Story</span>
+                            </div>
+                        </div>
+
+                        <!-- Press Article 3 -->
+                        <div class="bg-white group cursor-pointer border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+                            <div class="p-8">
+                                <p class="text-xs text-charcoal/50 uppercase tracking-widest mb-3">March 22, 2026</p>
+                                <h3 class="font-serif text-xl mb-4 text-charcoal group-hover:text-gold transition-colors">Aura Wins Global Textile Innovation Award</h3>
+                                <p class="text-charcoal/70 font-light text-sm mb-6 leading-relaxed">
+                                    The International Weavers Guild has recognized Aura Textiles with the Innovation Award for our groundbreaking water-recycling dye process...
+                                </p>
+                                <span class="text-xs uppercase tracking-widest font-semibold text-charcoal border-b border-charcoal pb-1">Read Full Story</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-charcoal pt-20 pb-10 border-t border-white/10 text-center sm:text-left mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <!-- Brand -->
+                <div class="md:col-span-1">
+                    <div class="font-serif text-3xl font-semibold tracking-wider text-white block mb-6">AURA</div>
+                    <p class="text-white/50 text-sm font-light leading-relaxed">
+                        Elevating the art of textiles through time-honored techniques and uncompromising quality standards since 1982.
+                    </p>
+                </div>
+                
+                <!-- Links -->
+                <div>
+                    <h5 class="text-white font-semibold uppercase tracking-widest text-xs mb-6">Company</h5>
+                    <ul class="space-y-4">
+                        <li><button onclick="switchTab('view-about')" class="text-white/50 hover:text-gold transition-colors text-sm font-light">About Us</button></li>
+                        <li><a href="#" class="text-white/50 hover:text-gold transition-colors text-sm font-light">Sustainability</a></li>
+                        <li><button onclick="switchTab('view-careers')" class="text-white/50 hover:text-gold transition-colors text-sm font-light">Careers</button></li>
+                        <li><button onclick="switchTab('view-press')" class="text-white/50 hover:text-gold transition-colors text-sm font-light">Press</button></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h5 class="text-white font-semibold uppercase tracking-widest text-xs mb-6">Client Care</h5>
+                    <ul class="space-y-4">
+                        <li><button onclick="switchTab('view-contact')" class="text-white/50 hover:text-gold transition-colors text-sm font-light">Contact Us</button></li>
+                        <li><button onclick="switchTab('view-shipping')" class="text-white/50 hover:text-gold transition-colors text-sm font-light">Shipping & Returns</button></li>
+                        <li><a href="#" class="text-white/50 hover:text-gold transition-colors text-sm font-light">Fabric Care Guide</a></li>
+                        <li><a href="#" class="text-white/50 hover:text-gold transition-colors text-sm font-light">Bespoke Orders</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Newsletter -->
+                <div>
+                    <h5 class="text-white font-semibold uppercase tracking-widest text-xs mb-6">Join the Atelier</h5>
+                    <p class="text-white/50 text-sm font-light mb-4">Subscribe to receive updates on new collections and exclusive events.</p>
+                    <form onsubmit="event.preventDefault(); showToast('Thank you for subscribing.');" class="flex flex-col sm:flex-row gap-2">
+                        <input type="email" placeholder="Email Address" required class="bg-transparent border border-white/20 px-4 py-2 text-sm text-white focus:outline-none focus:border-gold w-full" />
+                        <button type="submit" class="bg-white text-charcoal px-4 py-2 uppercase tracking-widest text-xs font-semibold hover:bg-gold hover:text-white transition-colors duration-300">
+                            Join
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-white/30 text-xs font-light">
+                    &copy; 2026 Aura Textiles Ltd. All rights reserved. Showroom located in Calgary, AB.
+                </p>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-white/30 hover:text-white transition-colors">
+                        <span class="sr-only">Instagram</span>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd" /></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom Toast Notification -->
+    <div id="toast" class="toast shadow-2xl border border-white/10">Message goes here</div>
+
+    <!-- Scripts -->
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // 1. Hide all page views
+            const views = document.querySelectorAll('.page-view');
+            views.forEach(view => {
+                view.classList.remove('block', 'animate-fade-in');
+                view.classList.add('hidden');
+            });
+
+            // 2. Show requested page view
+            const activeView = document.getElementById(tabId);
+            activeView.classList.remove('hidden');
+            activeView.classList.add('block', 'animate-fade-in');
+
+            // 3. Update desktop Nav active states
+            const desktopNavBtns = document.querySelectorAll('.nav-btn');
+            desktopNavBtns.forEach(btn => {
+                if (btn.getAttribute('data-target') === tabId) {
+                    btn.classList.add('nav-active');
+                    // If navbar is dark (top of page), make sure active state shows
+                    if (window.scrollY < 50) {
+                        btn.classList.add('text-gold');
+                        btn.classList.remove('text-white/90');
+                    }
+                } else {
+                    btn.classList.remove('nav-active');
+                    if (window.scrollY < 50) {
+                        btn.classList.remove('text-gold');
+                        btn.classList.add('text-white/90');
+                    } else {
+                        btn.classList.remove('text-gold');
+                        btn.classList.add('text-charcoal/80');
+                    }
+                }
+            });
+
+            // 4. Update mobile Nav active states
+            const mobileNavBtns = document.querySelectorAll('.nav-btn-mobile');
+            mobileNavBtns.forEach(btn => {
+                if (btn.getAttribute('data-target') === tabId) {
+                    btn.classList.add('text-gold');
+                    btn.classList.remove('text-cream');
+                } else {
+                    btn.classList.remove('text-gold');
+                    btn.classList.add('text-cream');
+                }
+            });
+
+            // 5. Scroll to top & close mobile menu
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('mobile-menu').classList.add('hidden');
+            
+            // Re-trigger navbar check to ensure colors are right based on scroll 0
+            checkNavbarScroll();
+        }
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        const logoText = document.getElementById('logo-text');
+        const menuIcon = document.getElementById('menu-icon');
+        
+        function checkNavbarScroll() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-white', 'shadow-md');
+                logoText.classList.replace('text-white', 'text-charcoal');
+                menuIcon.parentElement.classList.replace('text-white', 'text-charcoal');
+                
+                navLinks.forEach(link => {
+                    if (!link.classList.contains('nav-active')) {
+                        link.classList.replace('text-white/90', 'text-charcoal/80');
+                    }
+                });
+            } else {
+                navbar.classList.remove('bg-white', 'shadow-md');
+                logoText.classList.replace('text-charcoal', 'text-white');
+                menuIcon.parentElement.classList.replace('text-charcoal', 'text-white');
+                
+                navLinks.forEach(link => {
+                    if (!link.classList.contains('nav-active')) {
+                        link.classList.replace('text-charcoal/80', 'text-white/90');
+                    }
+                });
+            }
+        }
+
+        window.addEventListener('scroll', checkNavbarScroll);
+
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Custom Toast Notification System
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = "toast show shadow-2xl border border-white/10";
+            
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(function(){ 
+                toast.className = toast.className.replace("show", ""); 
+            }, 3000);
+        }
+
+        // Cart Interaction
+        let cartCount = 0;
+        function addToCart(itemName, price) {
+            cartCount++;
+            showToast(`Added ${itemName} to your cart. ($${price}.00)`);
+            
+            // Find and update mobile cart text
+            const buttons = document.querySelectorAll('#mobile-menu button');
+            buttons.forEach(b => {
+                if(b.textContent.includes('Cart')) {
+                    b.textContent = `Cart (${cartCount})`;
+                }
+            });
+        }
+
+        // Handle Contact Form Submit
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('firstName').value;
+            showToast(`Thank you, ${name}. Your inquiry has been sent to our Calgary showroom.`);
+            event.target.reset();
+        }
+
+        // Initialize scroll check on load
+        checkNavbarScroll();
+    </script>
+</body>
+</html>
